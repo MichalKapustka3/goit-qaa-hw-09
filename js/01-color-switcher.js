@@ -1,37 +1,34 @@
-// Funkcja generująca losowy kolor
+const btnStart = document.querySelector("button[data-start]");
+const btnStop = document.querySelector("button[data-stop]");
+const body = document.querySelector("body");
+
 function getRandomHexColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  return `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, 0)}`;
 }
 
-// Pobranie referencji do przycisków
-const startButton = document.querySelector("[data-start]");
-const stopButton = document.querySelector("[data-stop]");
+let intervalId = null;
 
-// przycisk "Stop" jest nieaktywny
-stopButton.disabled = true;
-
-let intervalId; // Zmienna przechowująca ID interwału
-
-// Funkcja obsługująca kliknięcie przycisku "Start"
-function handleStartButtonClick() {
-  startButton.disabled = true; // Dezaktywacja przycisku "Start"
-  stopButton.disabled = false; // Aktywacja przycisku "Stop"
-
-  // Rozpoczęcie interwału zmieniającego kolor tła co sekundę
-  intervalId = setInterval(() => {
-    document.body.style.backgroundColor = getRandomHexColor();
-  }, 1000);
+function changeColor() {
+  const newColor = getRandomHexColor();
+  body.style.backgroundColor = newColor;
 }
 
-// Funkcja obsługująca kliknięcie przycisku "Stop"
-function handleStopButtonClick() {
-  startButton.disabled = false; // Aktywacja przycisku "Start"
-  stopButton.disabled = true; // Dezaktywacja przycisku "Stop"
+// Wywołanie funkcji changeColor() na początku
+changeColor();
 
-  // Zatrzymanie interwału zmieniającego kolor tła
+btnStart.addEventListener("click", () => {
+  btnStart.disabled = true;
+  btnStop.disabled = false;
+  intervalId = setInterval(changeColor, 1000);
+});
+
+btnStop.addEventListener("click", () => {
+  if (intervalId === null) {
+    return;
+  }
   clearInterval(intervalId);
-}
-
-// Dodanie nasłuchiwania na kliknięcia przycisków
-startButton.addEventListener("click", handleStartButtonClick);
-stopButton.addEventListener("click", handleStopButtonClick);
+  btnStart.disabled = false;
+  btnStop.disabled = true;
+});
